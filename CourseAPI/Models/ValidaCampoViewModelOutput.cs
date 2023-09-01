@@ -1,10 +1,10 @@
 ﻿namespace CourseAPI.Models
 {
-    public class ValidaCampoViewModel
+    public class ValidaCampoViewModelOutput
     {
         public IEnumerable<string> Erros { get; private set; }
 
-        public ValidaCampoViewModel(IEnumerable<string> erros)
+        public ValidaCampoViewModelOutput(IEnumerable<string> erros)
         {
             Erros = erros;
         }

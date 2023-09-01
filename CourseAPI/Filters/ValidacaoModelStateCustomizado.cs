@@ -10,7 +10,7 @@ namespace CourseAPI.Filters
         {
             if (!context.ModelState.IsValid)
             {
-                var validaCampoViewModel = new ValidaCampoViewModel(
+                var validaCampoViewModel = new ValidaCampoViewModelOutput(
                     context.ModelState
                            .SelectMany(sm => sm.Value.Errors)
                            .Select(s => s.ErrorMessage)
