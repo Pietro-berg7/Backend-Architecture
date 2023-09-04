@@ -62,15 +62,24 @@ namespace CourseAPI.Controllers
             });
         }
 
+        [SwaggerResponse(statusCode: 201, description: "Sucesso ao cadastrar", Type = typeof(RegistroViewModelInput))]
+        [SwaggerResponse(statusCode: 400, description: "Campos obrigatórios", Type = typeof(ValidaCampoViewModelOutput))]
+        [SwaggerResponse(statusCode: 500, description: "Erro interno", Type = typeof(ErroGenericoViewModel))]   
         [HttpPost]
         [Route("registrar")]
         [ValidacaoModelStateCustomizado]
         public IActionResult Registrar(RegistroViewModelInput loginViewModelInput)
         {
             var optionsBuilder = new DbContextOptionsBuilder<CursoDbContext>();
-            optionsBuilder.UseSqlServer("Server=localhost;Database=CURSO;user=sa;password=App@223020");
-
+            optionsBuilder.UseSqlServer("Server=localhost\\sqlexpress; Initial Catalog=CURSO; Integrated Security=True; Encrypt=false;");
             CursoDbContext contexto = new CursoDbContext(optionsBuilder.Options);
+
+            var migracoesPendentes = contexto.Database.GetPendingMigrations();
+
+            if (migracoesPendentes.Count() > 0)
+            {
+                contexto.Database.Migrate();
+            }
 
             var usuario = new Usuario();
             usuario.Login = loginViewModelInput.Login;
