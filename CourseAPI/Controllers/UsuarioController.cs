@@ -1,13 +1,15 @@
-﻿using CourseAPI.Models;
-using CourseAPI.Models.Usuarios;
+﻿using CourseAPI.Business.Entities;
 using CourseAPI.Filters;
-using Microsoft.AspNetCore.Http;
+using CourseAPI.Infrastructure.Data;
+using CourseAPI.Models;
+using CourseAPI.Models.Usuarios;
 using Microsoft.AspNetCore.Mvc;
-using Swashbuckle.AspNetCore.Annotations;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using Swashbuckle.AspNetCore.Annotations;
+using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
-using System.IdentityModel.Tokens.Jwt;
 
 namespace CourseAPI.Controllers
 {
@@ -63,9 +65,21 @@ namespace CourseAPI.Controllers
         [HttpPost]
         [Route("registrar")]
         [ValidacaoModelStateCustomizado]
-        public IActionResult Registrar(RegistroViewModelInput registroViewModelInput)
+        public IActionResult Registrar(RegistroViewModelInput loginViewModelInput)
         {
-            return Created("", registroViewModelInput);
+            var optionsBuilder = new DbContextOptionsBuilder<CursoDbContext>();
+            optionsBuilder.UseSqlServer("Server=localhost;Database=CURSO;user=sa;password=App@223020");
+
+            CursoDbContext contexto = new CursoDbContext(optionsBuilder.Options);
+
+            var usuario = new Usuario();
+            usuario.Login = loginViewModelInput.Login;
+            usuario.Senha = loginViewModelInput.Senha;
+            usuario.Email = loginViewModelInput.Email;
+            contexto.Usuario.Add(usuario);
+            contexto.SaveChanges();
+
+            return Created("", loginViewModelInput);
         }
     }
 }
